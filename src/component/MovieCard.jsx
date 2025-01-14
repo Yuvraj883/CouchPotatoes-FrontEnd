@@ -1,0 +1,32 @@
+import React from 'react';
+import { Link } from 'react-router-dom';
+
+function MovieCard({ movie }) {
+  const description = movie.plot || movie.fullplot || 'No description available';
+
+  return (
+    <div className="max-w-sm w-[30%] rounded overflow-hidden shadow-lg bg-gray-800 text-white">
+      <img
+        src={movie.poster || 'default-image-url.jpg'}
+        alt={movie.title}
+        className="w-full h-64 object-cover"
+      />
+      <div className="px-6 py-4">
+        <h2 className="text-xl font-bold mb-2">{movie.title || 'No title available'}</h2>
+        <p className="text-gray-400 text-base">{description.slice(0, 100)}...</p>
+        <p className="text-yellow-400 text-sm font-semibold">
+          Rating: {movie.imdb?.rating || 'N/A'}
+        </p>
+        {/* Link to the full details page */}
+        <Link
+          to={`/movie/${movie._id}`}  // Using the movie's unique ID in the URL
+          className="text-blue-500 hover:underline mt-2 block"
+        >
+          View Full Details
+        </Link>
+      </div>
+    </div>
+  );
+}
+
+export default MovieCard;
