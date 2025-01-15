@@ -5,9 +5,9 @@ const Header = () => {
   const menu = [
     { name: "Home", link: "/" },
     { name: "Top Rated", link: "/top-rated" },
-    { name: "Genres", link: "/genres" },
+    // { name: "Genres", link: "/genres" },
     {name:"About", link:"/about"},
-    {name:"Contact", link:'/contact'}
+    {name:"Contact", link:'https://yuvis-portfolio.vercel.app/'}
   ];
 
   // State to manage the visibility of the mobile menu
@@ -16,9 +16,9 @@ const Header = () => {
   return (
     <header className="bg-gray-800 text-white px-4 py-3 md:px-8 flex items-center justify-between">
       {/* Logo Section */}
-      <div className="text-lg flex flex-row items-center font-bold">
+      <div className="text-lg flex flex-row items-center h-12 font-bold">
         <a href="/" className="hover:text-gray-300">
-        <span className="text-3xl">🍿</span> MovieApp
+        <span className="text-4xl">🛋️ </span> CouchPotatoes
         </a>
       </div>
 
