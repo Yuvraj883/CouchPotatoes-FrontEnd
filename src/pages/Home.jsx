@@ -39,7 +39,7 @@ export default function Home() {
 
   return (
     <>
-      <Header />
+      
       <HeroSection />
       <GenreList
         onGenreSelect={handleGenreSelect}
