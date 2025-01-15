@@ -32,19 +32,19 @@ function MovieDetails() {
             <div className="flex flex-col w-full">
               <h1 className="text-3xl font-bold text-gray-800 mb-2">{movieDetails.title}</h1>
               <p className="text-lg text-gray-600 mb-2">Released: {new Date(movieDetails.released).toLocaleDateString()}</p>
-              <p className="text-lg text-gray-600 mb-2">Genres: {movieDetails.genres.join(', ')}</p>
+              <p className="text-lg text-gray-600 mb-2">Genres: {movieDetails.genres?.join(', ')}</p>
               <p className="text-lg text-gray-600 mb-2">Runtime: {movieDetails.runtime} minutes</p>
-              <p className="text-lg text-gray-600 mb-2">Languages: {movieDetails.languages.join(', ')}</p>
+              <p className="text-lg text-gray-600 mb-2">Languages: {movieDetails.languages?.join(', ')}</p>
 
               {/* Ratings Section */}
               <div className="mt-4 space-x-4">
                 <span className="text-lg font-semibold">Ratings:</span>
                 <div className="space-x-4">
                   <div className="text-blue-500">
-                    <strong>IMDB:</strong> {movieDetails.imdb.rating} / 10 ({movieDetails.imdb.votes} votes)
+                    <strong>IMDB:</strong> {movieDetails.imdb?.rating} / 10 ({movieDetails.imdb?.votes} votes)
                   </div>
                   <div className="text-green-500">
-                    <strong>Rotten Tomatoes:</strong> {movieDetails.tomatoes.viewer.rating} / 5 ({movieDetails.tomatoes.viewer.numReviews} reviews, {movieDetails.tomatoes.viewer.meter}% rating)
+                    <strong>Rotten Tomatoes:</strong> {movieDetails.tomatoes?.viewer?.rating} / 5 ({movieDetails.tomatoes?.viewer?.numReviews} reviews, {movieDetails.tomatoes?.viewer?.meter}% rating)
                   </div>
                 </div>
               </div>
@@ -52,16 +52,16 @@ function MovieDetails() {
               {/* Awards Section */}
               <div className="mt-4">
                 <span className="text-lg font-semibold">Awards:</span>
-                <p className="text-gray-600">Wins: {movieDetails.awards.wins}, Nominations: {movieDetails.awards.nominations}</p>
-                <p className="text-gray-600">Text: {movieDetails.awards.text}</p>
+                <p className="text-gray-600">Wins: {movieDetails.awards?.wins}, Nominations: {movieDetails.awards?.nominations}</p>
+                <p className="text-gray-600">Text: {movieDetails.awards?.text}</p>
               </div>
 
               {/* Directors & Writers Section */}
               <div className="mt-4">
                 <h2 className="text-xl font-semibold text-gray-700">Directors</h2>
-                <p className="text-lg text-gray-600">{movieDetails.directors.join(', ')}</p>
+                <p className="text-lg text-gray-600">{movieDetails.directors?.join(', ')}</p>
                 <h2 className="text-xl font-semibold text-gray-700 mt-4">Writers</h2>
-                <p className="text-lg text-gray-600">{movieDetails.writers.join(', ')}</p>
+                <p className="text-lg text-gray-600">{movieDetails.writers?.join(', ')}</p>
               </div>
             </div>
           </div>
@@ -76,7 +76,7 @@ function MovieDetails() {
           <div className="mb-8">
             <h2 className="text-2xl font-semibold text-gray-700 mb-4">Cast</h2>
             <ul className="list-none pl-0">
-              {movieDetails.cast.map((actor, index) => (
+              {movieDetails.cast?.map((actor, index) => (
                 <li key={index} className="text-lg text-gray-700">{actor}</li>
               ))}
             </ul>
@@ -90,4 +90,3 @@ function MovieDetails() {
 }
 
 export default MovieDetails;
-//comment
