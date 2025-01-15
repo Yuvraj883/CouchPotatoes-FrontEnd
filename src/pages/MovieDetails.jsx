@@ -20,14 +20,14 @@ function MovieDetails() {
   }, [id]);
 
   return (
-    <div className="flex justify-center p-6 bg-gray-100 min-h-screen">
+    <div className="flex md:flex-row flex-col justify-center p-6 bg-gray-100 min-h-screen">
       {movieDetails ? (
         <div className="bg-white w-full max-w-7xl p-6 rounded-lg shadow-lg">
-          <div className="flex mb-8">
+          <div className="flex flex-col md:flex-row mb-8">
             <img 
               src={movieDetails.poster} 
               alt={movieDetails.title} 
-              className="w-64 h-auto rounded-lg mr-8"
+              className="md:w-[50vw] mx-auto h-auto rounded-lg mr-8"
             />
             <div className="flex flex-col w-full">
               <h1 className="text-3xl font-bold text-gray-800 mb-2">{movieDetails.title}</h1>

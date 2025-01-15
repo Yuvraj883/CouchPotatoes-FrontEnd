@@ -5,7 +5,7 @@ function MovieCard({ movie }) {
   const description = movie.plot || movie.fullplot || 'No description available';
 
   return (
-    <div className="max-w-sm w-[30%] rounded overflow-hidden shadow-lg bg-gray-800 text-white">
+    <div className="max-w-sm md:w-[30%] rounded overflow-hidden shadow-lg bg-gray-800 text-white">
       <img
         src={movie.poster || 'default-image-url.jpg'}
         alt={movie.title}
