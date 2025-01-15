@@ -1,51 +1,80 @@
-import React from 'react';
+import React, { useState } from "react";
 
-function Header() {
-  const navMenu = [
-    {
-      name: 'Home',
-      path: '/'
-    },
-    {
-      name: 'Movies',
-      path: '/movies'
-    },
-    {
-      name: 'Top Rated',
-      path: '/top-rated'
-    },
-    {
-      name: 'About Us',
-      path: '/about'
-    },
-    {
-      name: 'Contact',
-      path: '/contact'
-    }
+const Header = () => {
+  // Menu items array
+  const menu = [
+    { name: "Home", link: "/" },
+    { name: "Top Rated", link: "/top-rated" },
+    { name: "Genres", link: "/genres" },
+    {name:"About", link:"/about"},
+    {name:"Contact", link:'/contact'}
   ];
 
+  // State to manage the visibility of the mobile menu
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
   return (
-    <nav className="flex flex-row justify-between items-center px-6 py-4 bg-gray-800 shadow-lg">
-      <div>
-        <span className="font-bold text-2xl text-yellow-500">
-          <span className="text-3xl px-2">🍿</span> Movie Galaxy
-        </span>
+    <header className="bg-gray-800 text-white px-4 py-3 md:px-8 flex items-center justify-between">
+      {/* Logo Section */}
+      <div className="text-lg flex flex-row items-center font-bold">
+        <a href="/" className="hover:text-gray-300">
+        <span className="text-3xl">🍿</span> MovieApp
+        </a>
       </div>
-      <div>
-        <ul className="flex flex-row justify-center items-center space-x-6">
-          {navMenu.map((menu, id) => (
+
+      {/* Desktop Navigation */}
+      <nav className="hidden md:flex gap-4">
+        {menu.map((item, index) => (
+          <a
+            key={index}
+            href={item.link}
+            className="hover:text-gray-300 transition-colors"
+          >
+            {item.name}
+          </a>
+        ))}
+      </nav>
+
+      {/* Mobile Menu Button */}
+      <div className="md:hidden">
+        <button
+          type="button"
+          className="text-white hover:text-gray-300 focus:outline-none"
+          onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            strokeWidth="2"
+            stroke="currentColor"
+            className="w-6 h-6"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="M4 6h16M4 12h16m-7 6h7"
+            />
+          </svg>
+        </button>
+      </div>
+
+      {/* Mobile Dropdown Menu */}
+      {isMobileMenuOpen && (
+        <div className="absolute top-16 left-0 w-full bg-gray-800 text-white flex flex-col items-center md:hidden">
+          {menu.map((item, index) => (
             <a
-              key={id}
-              className="text-white text-lg hover:text-yellow-400 transition duration-300"
-              href={menu.path}
+              key={index}
+              href={item.link}
+              className="py-2 px-4 w-full text-center hover:bg-gray-700 transition-colors"
             >
-              <li>{menu.name}</li>
+              {item.name}
             </a>
           ))}
-        </ul>
-      </div>
-    </nav>
+        </div>
+      )}
+    </header>
   );
-}
+};
 
 export default Header;
