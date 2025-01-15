@@ -3,10 +3,12 @@ import React from 'react';
 const AboutPage = () => {
   return (
     <div className="about-page container mx-auto my-8 p-4 bg-white shadow-lg rounded-lg">
-      <h1 className="text-3xl font-semibold text-center text-blue-600">About Movie Review App</h1>
+      <h1 className="text-3xl font-semibold text-center text-blue-600">
+        About CouchPotatoes 🛋️
+      </h1>
       <div className="mt-6 text-lg">
         <p>
-          Welcome to the Movie Review App! This application allows movie enthusiasts to explore a wide range of films, discover new favorites, and dive into detailed movie information.
+          Welcome <strong>CouchPotatoes </strong>! This application allows movie enthusiasts to explore a wide range of films, discover new favorites, and dive into detailed movie information.
         </p>
         <p className="mt-4">
           Our app provides a user-friendly interface for browsing movies, filtering by genres, reading reviews, and staying up-to-date with top-rated films.
@@ -28,6 +30,7 @@ const AboutPage = () => {
         <ul className="list-disc pl-6 mt-4">
           <li>React for the frontend</li>
           <li>Node.js & Express for the backend</li>
+          <li>TypeScript for the backend code</li>
           <li>MongoDB for the database</li>
           <li>Tailwind CSS for styling</li>
         </ul>
@@ -35,7 +38,7 @@ const AboutPage = () => {
 
       <div className="mt-6 text-lg">
         <p>
-          Our goal is to make it easier for movie lovers to find great films and learn more about their favorite titles. We hope you enjoy using our app!
+          Our goal is to make it easier for movie lovers to find great films and learn more about their favorite titles. We hope you enjoy using <strong>CouchPotatoes</strong>!
         </p>
       </div>
 
