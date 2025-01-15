@@ -5,6 +5,7 @@ import MovieDetails from './pages/MovieDetails'; // Your movie details component
 import Header from './component/Header';
 import Footer from './component/Footer';
 import AboutPage from './pages/About';
+import TopRatedMovies from './pages/TopRated';
 
 function App() {
   return (
@@ -14,6 +15,7 @@ function App() {
         <Route path="/" element={<Home />} />
         <Route path="/movie/:id" element={<MovieDetails />} /> {/* Dynamic route */}
         <Route path='/about' element={<AboutPage/>}/>
+        <Route path='/top-rated' element={<TopRatedMovies/>}/>
       </Routes>
       <Footer/>
     </Router>
