@@ -1,18 +1,26 @@
 import React, { useState } from 'react';
 
-function SearchBar() {
+function SearchBar({ onSearch }) {
   const [query, setQuery] = useState('');
-  const [results, setResults] = useState([]);
 
   const handleSearch = async () => {
-    if (!query) return;
+    if (query.trim()) {
+      try {
+        const res = await fetch(`http://localhost:8000/movie/search?q=${query}`);
+        const data = await res.json();
+        
+        console.log(data);
 
-    try {
-      const response = await fetch(`http://localhost:8000/search?query=${query}`);
-      const data = await response.json();
-      setResults(data);
-    } catch (error) {
-      console.error('Error fetching search results:', error);
+        if (data && Array.isArray(data.result)) {
+            console.log(data);
+          onSearch(data.result); // Pass the fetched movies to the parent component
+        } else {
+          onSearch([]); // Send an empty array if no results are found
+        }
+      } catch (error) {
+        console.error('Error fetching search results:', error);
+        onSearch([]); // Clear movies if there's an error
+      }
     }
   };
 
@@ -31,15 +39,6 @@ function SearchBar() {
       >
         Search
       </button>
-
-      <div className="results mt-4">
-        {results.map((movie) => (
-          <div key={movie._id} className="border p-4 rounded-lg mb-2 shadow">
-            <h3 className="text-xl font-semibold">{movie.title}</h3>
-            <p>{movie.fullplot}</p>
-          </div>
-        ))}
-      </div>
     </div>
   );
 }
