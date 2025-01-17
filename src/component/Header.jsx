@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import Cookies from "js-cookie";
 
 const Header = () => {
   const navigate = useNavigate();
@@ -20,21 +19,36 @@ const Header = () => {
   const [userName, setUserName] = useState(null);
 
   useEffect(() => {
-    // Check for user token and extract the name from it
-    const authToken = Cookies.get("authtoken");
-    if (authToken) {
-      try {
-        const user = JSON.parse(atob(authToken.split(".")[1])); // Assuming JWT token format
-        setUserName(user.name); // Extract user's name from the token payload
-      } catch (error) {
-        console.error("Error parsing auth token:", error);
+    // Function to check and decode the auth token
+    const checkAuthToken = () => {
+      const authToken = localStorage.getItem("authToken"); // Retrieve the token
+      if (authToken) {
+        try {
+          const user = JSON.parse(atob(authToken.split(".")[1])); // Decode JWT payload
+          setUserName(user.name); // Set user's name
+        } catch (error) {
+          console.error("Error parsing auth token:", error);
+        }
+      } else {
+        setUserName(null); // Clear the userName if no token exists
       }
-    }
+    };
+
+    // Initial check
+    checkAuthToken();
+
+    // Add event listener to listen for changes in localStorage
+    window.addEventListener("storage", checkAuthToken);
+
+    // Cleanup event listener on unmount
+    return () => {
+      window.removeEventListener("storage", checkAuthToken);
+    };
   }, []);
 
   // Handle logout
   const handleLogout = () => {
-    Cookies.remove("authtoken"); // Remove the token
+    localStorage.removeItem("authToken"); // Remove token from localStorage
     setUserName(null); // Clear user info
     navigate("/login");
   };
@@ -67,12 +81,14 @@ const Header = () => {
       <div className="flex items-center gap-4">
         {userName ? (
           <div className="flex items-center gap-2">
+            {/* Profile Icon */}
             <div
               className="w-10 h-10 rounded-full bg-white text-gray-800 font-bold flex items-center justify-center cursor-pointer"
               title={userName}
             >
               {userName.charAt(0).toUpperCase()}
             </div>
+            {/* Logout Button */}
             <button
               onClick={handleLogout}
               className="text-sm bg-red-600 px-3 py-1 rounded-lg hover:bg-red-700 transition"
