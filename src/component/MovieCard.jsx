@@ -5,14 +5,16 @@ function MovieCard({ movie }) {
   const description = movie.plot || movie.fullplot || 'No description available';
 
   return (
-    <div className="max-w-sm md:w-[30%] rounded overflow-hidden shadow-lg bg-gray-800 text-white">
+    <div className="max-w-sm md:w-[32%] rounded overflow-hidden p-2 shadow-lg bg-gray-800 text-white">
+      
+        
       <img
         src={movie.poster || 'default-image-url.jpg'}
         alt={movie.title}
         className="w-full h-64 object-cover"
       />
       <div className="px-6 py-4">
-        <h2 className="text-xl font-bold mb-2">{movie.title || 'No title available'}</h2>
+        <h2 className="text-xl font-bold mb-2 line-clamp-1">{movie.title || 'No title available'}</h2>
         <p className="text-gray-400 text-base">{description.slice(0, 100)}...</p>
         <p className="text-yellow-400 text-sm font-semibold">
           Rating: {movie.imdb?.rating || 'N/A'}
@@ -25,6 +27,7 @@ function MovieCard({ movie }) {
           View Full Details
         </Link>
       </div>
+      
     </div>
   );
 }

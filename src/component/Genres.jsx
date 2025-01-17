@@ -40,7 +40,7 @@ const GenreList = ({ onGenreSelect, selectedGenres }) => {
         {genres.map((genre, index) => (
           <li
             key={index}
-            className={`text-gray-700 px-3 py-1 h-8 rounded-l-full rounded-r-full mx-2 cursor-pointer 
+            className={`text-gray-700 px-3 py-1 h-8 rounded-l-full rounded-r-full mx-2 cursor-pointer hover:bg-blue-500 hover:text-white
               ${selectedGenres.includes(genre) ? 'bg-blue-500 text-white' : 'bg-white'}`}
             onClick={() => handleGenreClick(genre)} // Call onGenreSelect when a genre is clicked
           >
