@@ -6,10 +6,8 @@ function MovieCard({ movie }) {
 
   return (
     <div className="max-w-sm md:w-[32%] rounded overflow-hidden p-2 shadow-lg bg-gray-800 text-white">
-      <Link
-          to={`/movie/${movie._id}`}  // Using the movie's unique ID in the URL
-          className="text-blue-500 hover:underline mt-2 block"
-        >
+      
+        
       <img
         src={movie.poster || 'default-image-url.jpg'}
         alt={movie.title}
@@ -29,7 +27,7 @@ function MovieCard({ movie }) {
           View Full Details
         </Link>
       </div>
-      </Link>
+      
     </div>
   );
 }
