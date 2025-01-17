@@ -1,24 +1,52 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import Cookies from "js-cookie";
 
 const Header = () => {
+  const navigate = useNavigate();
+
   // Menu items array
   const menu = [
     { name: "Home", link: "/" },
     { name: "Top Rated", link: "/top-rated" },
-    // { name: "Genres", link: "/genres" },
-    {name:"About", link:"/about"},
-    {name:"Contact", link:'https://yuvis-portfolio.vercel.app/'}
+    { name: "About", link: "/about" },
+    { name: "Contact", link: "https://yuvis-portfolio.vercel.app/" },
   ];
 
   // State to manage the visibility of the mobile menu
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
+  // State to manage user login status and name
+  const [userName, setUserName] = useState(null);
+
+  useEffect(() => {
+    // Check for user token and extract the name from it
+    const authToken = Cookies.get("authtoken");
+    if (authToken) {
+      try {
+        const user = JSON.parse(atob(authToken.split(".")[1])); // Assuming JWT token format
+        setUserName(user.name); // Extract user's name from the token payload
+      } catch (error) {
+        console.error("Error parsing auth token:", error);
+      }
+    }
+  }, []);
+
+  // Handle logout
+  const handleLogout = () => {
+    Cookies.remove("authtoken"); // Remove the token
+    setUserName(null); // Clear user info
+    navigate("/login");
+  };
+
   return (
-    <header className="bg-gray-800 text-white px-4 py-3 md:px-8 flex items-center justify-between">
+    <header
+      className="bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 text-white px-4 py-3 md:px-8 flex items-center justify-between shadow-lg"
+    >
       {/* Logo Section */}
       <div className="text-lg flex flex-row items-center h-12 font-bold">
         <a href="/" className="hover:text-gray-300">
-        <span className="text-4xl">🛋️ </span> CouchPotatoes
+          <span className="text-4xl">🛋️</span> CouchPotatoes
         </a>
       </div>
 
@@ -34,6 +62,41 @@ const Header = () => {
           </a>
         ))}
       </nav>
+
+      {/* User or Login/Sign-Up Section */}
+      <div className="flex items-center gap-4">
+        {userName ? (
+          <div className="flex items-center gap-2">
+            <div
+              className="w-10 h-10 rounded-full bg-white text-gray-800 font-bold flex items-center justify-center cursor-pointer"
+              title={userName}
+            >
+              {userName.charAt(0).toUpperCase()}
+            </div>
+            <button
+              onClick={handleLogout}
+              className="text-sm bg-red-600 px-3 py-1 rounded-lg hover:bg-red-700 transition"
+            >
+              Logout
+            </button>
+          </div>
+        ) : (
+          <>
+            <button
+              onClick={() => navigate("/login")}
+              className="text-sm bg-blue-600 px-3 py-1 rounded-lg hover:bg-blue-700 transition"
+            >
+              Login
+            </button>
+            <button
+              onClick={() => navigate("/register")}
+              className="text-sm bg-green-600 px-3 py-1 rounded-lg hover:bg-green-700 transition"
+            >
+              Sign Up
+            </button>
+          </>
+        )}
+      </div>
 
       {/* Mobile Menu Button */}
       <div className="md:hidden">
@@ -71,6 +134,29 @@ const Header = () => {
               {item.name}
             </a>
           ))}
+          {userName ? (
+            <button
+              onClick={handleLogout}
+              className="w-full py-2 bg-red-600 text-white text-sm hover:bg-red-700 transition"
+            >
+              Logout
+            </button>
+          ) : (
+            <>
+              <button
+                onClick={() => navigate("/login")}
+                className="w-full py-2 bg-blue-600 text-white text-sm hover:bg-blue-700 transition"
+              >
+                Login
+              </button>
+              <button
+                onClick={() => navigate("/register")}
+                className="w-full py-2 bg-green-600 text-white text-sm hover:bg-green-700 transition"
+              >
+                Sign Up
+              </button>
+            </>
+          )}
         </div>
       )}
     </header>
