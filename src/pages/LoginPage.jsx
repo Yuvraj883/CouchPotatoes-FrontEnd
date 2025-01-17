@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import bgImage from "../assets/bg3.jpg"; // Adjust the path as per your project structure
+import bgImage from "../assets/bg2.jpg"; // Adjust the path as per your project structure
 
 const Login = () => {
   // State to manage form data
@@ -45,10 +45,17 @@ const Login = () => {
 
       if (response.ok) {
         const data = await response.json();
+        const { token } = data;
+
+        // Store the token in localStorage
+        localStorage.setItem("authToken", token);
+
         setSuccess("Login successful!");
-        console.log("Token:", data.token); // Handle the token (e.g., store in localStorage)
+        console.log("Token stored in localStorage:", token);
+
+        // Redirect after a short delay
         setTimeout(() => {
-          navigate("/dashboard"); // Redirect to the dashboard or another page
+          navigate("/"); // Redirect to the dashboard or another page
         }, 2000);
       } else {
         const errorData = await response.json();
