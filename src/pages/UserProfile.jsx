@@ -7,6 +7,7 @@ const UserProfile = () => {
     email: "Not Provided",
     bio: "No bio available",
     joinedDate: "N/A",
+    likedMovies: [], // Add likedMovies to state
   });
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
@@ -27,14 +28,16 @@ const UserProfile = () => {
             Authorization: `Bearer ${authToken}`, // Pass token in Authorization header
           },
         });
-
+        console.log(response);
         if (response.ok) {
           const userData = await response.json();
+          console.log(userData.user);
           setUser({
-            name: userData?.name || "Unknown",
-            email: userData?.email || "Not Provided",
-            bio: userData?.bio || "No bio available",
-            joinedDate: userData?.joinedDate || "N/A",
+            name: userData?.user?.name || "Unknown",
+            email: userData?.user?.email || "Not Provided",
+            bio: userData?.user?.bio || "No bio available",
+            joinedDate: new Date(userData?.user?.createdAt).toLocaleString() || "N/A",
+            likedMovies: userData?.user?.likedMovies || [], // Set likedMovies from response
           });
         } else {
           console.error("Failed to fetch user details");
@@ -100,6 +103,28 @@ const UserProfile = () => {
               <h3 className="text-lg font-semibold text-gray-700">Joined:</h3>
               <p className="text-gray-600">{user.joinedDate}</p>
             </div>
+          </div>
+
+          {/* Liked Movies */}
+          <div className="w-full mb-6">
+            <h3 className="text-lg font-semibold text-gray-700">Liked Movies:</h3>
+            {user.likedMovies.length > 0 ? (
+              <div className="grid grid-cols-2 gap-4">
+                {user.likedMovies.map((movie) => (
+                  <div key={movie._id} className="p-2 bg-gray-100 rounded-lg shadow-sm">
+                    <img
+                      src={movie.poster || "default-image-url.jpg"}
+                      alt={movie.title}
+                      className="w-full h-32 object-cover rounded-lg"
+                    />
+                    <h4 className="text-gray-800 mt-2">{movie.title}</h4>
+                    <p className="text-gray-600 text-sm">{movie.plot?.slice(0, 60)}...</p>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <p className="text-gray-600">No movies liked yet.</p>
+            )}
           </div>
 
           {/* Action Buttons */}
