@@ -1,39 +1,40 @@
-import React, { useState, useEffect } from "react";
-import { FaHeart } from "react-icons/fa"; // Import the heart icon
-import { Link } from "react-router-dom"; // Import the Link component
+import React, { useState, useEffect, useContext } from "react";
+import { FaHeart } from "react-icons/fa";
+import { Link, useNavigate } from "react-router-dom";
+import { AuthContext } from "../context/AuthContext";
 
 function MovieCard({ movie }) {
-  const [isLiked, setIsLiked] = useState(movie.likes > 0); // Initial like status based on the movie's likes value
-  const [likes, setLikes] = useState(movie.likes || 0); // Track the likes count
+  const [isLiked, setIsLiked] = useState(movie.likes > 0);
+  const [likes, setLikes] = useState(movie.likes || 0);
+  const { isAuthenticated } = useContext(AuthContext);
+  const navigate = useNavigate();
 
   useEffect(() => {
-    // If the initial like status changes (e.g. movie gets liked/unliked), update the likes
     setLikes(movie.likes || 0);
   }, [movie.likes]);
 
   const handleLikeClick = async () => {
+    if (!isAuthenticated) {
+      alert("Please sign in to like this movie.");
+      navigate("/login");
+      return;
+    }
+
     try {
       const authToken = localStorage.getItem("authToken");
-      if (!authToken) {
-        // Redirect user to login if no auth token is found
-        window.location.href = "/login"; // Change this if you're using React Router for navigation
-        return;
-      }
 
-      // Send API request to like/unlike the movie
       const response = await fetch(`http://localhost:8000/movie/like/${movie._id}`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${authToken}`, // Add authorization token
+          Authorization: `Bearer ${authToken}`,
         },
       });
-      console.log(response);
+
       if (response.ok) {
         const data = await response.json();
-        // Update the like status and likes count
         setIsLiked(!isLiked);
-        setLikes(data.likes); // Get the updated likes count from the response
+        setLikes(data.likes);
       } else {
         console.error("Error while liking/unliking movie");
         alert("Error while liking/unliking movie.");
