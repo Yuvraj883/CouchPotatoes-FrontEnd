@@ -85,6 +85,7 @@ const Header = () => {
             <div
               className="w-10 h-10 rounded-full bg-white text-gray-800 font-bold flex items-center justify-center cursor-pointer"
               title={userName}
+              onClick={() => navigate("/profile")} // Navigate to profile page on click
             >
               {userName.charAt(0).toUpperCase()}
             </div>

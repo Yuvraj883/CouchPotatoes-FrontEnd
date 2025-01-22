@@ -6,6 +6,10 @@ import Header from './component/Header';
 import Footer from './component/Footer';
 import AboutPage from './pages/About';
 import TopRatedMovies from './pages/TopRated';
+import SearchPage from './pages/SearchPage';
+import Register from './pages/Registration';
+import Login from './pages/LoginPage';
+import UserProfile from './pages/UserProfile';
 
 function App() {
   return (
@@ -16,6 +20,14 @@ function App() {
         <Route path="/movie/:id" element={<MovieDetails />} /> {/* Dynamic route */}
         <Route path='/about' element={<AboutPage/>}/>
         <Route path='/top-rated' element={<TopRatedMovies/>}/>
+        <Route path='/search' element={<SearchPage/>}/>
+        <Route path='/register' element={<Register/>}/>
+        <Route path='/login' element={<Login/>}/>
+        <Route path='/profile' element={<UserProfile/>}/>
+
+
+
+
       </Routes>
       <Footer/>
     </Router>
