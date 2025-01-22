@@ -1,13 +1,97 @@
 import React, { useState, useEffect } from "react";
+import CommentItem from "./CommentItem";
+
+const ReplyItem = ({
+  reply,
+  setNewReplies,
+  newReplies,
+  setReplyingToReplyId,
+  replyingToReplyId,
+  handleAddNestedReply,
+  loadingReplies,
+  fetchRepliesToReply,
+  movieId,
+  setError
+}) => {
+  const handleShowNestedReplies = async (replyId) => {
+    if (!reply.replies && !loadingReplies[replyId]) {
+      await fetchRepliesToReply(replyId);
+    }
+  };
+
+  return (
+    <div className="p-3 border-l-2 border-gray-200">
+      <p className="text-sm text-gray-800">{reply.text}</p>
+      <span className="text-xs text-gray-500">- {reply.name || "Anonymous"}</span>
+
+      {/* Reply Button */}
+      {replyingToReplyId === reply._id ? (
+        <div className="mt-2">
+          <textarea
+            className="w-full p-2 border rounded-md"
+            placeholder="Add a reply..."
+            value={newReplies[reply._id] || ""}
+            onChange={(e) => setNewReplies((prev) => ({ ...prev, [reply._id]: e.target.value }))}
+          />
+          <button
+            onClick={() => handleAddNestedReply(reply._id)}
+            className="mt-2 px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600"
+          >
+            Reply
+          </button>
+        </div>
+      ) : (
+        <button
+          onClick={() => setReplyingToReplyId(reply._id)}
+          className="mt-2 mx-2 text-sm text-blue-500"
+        >
+          Reply
+        </button>
+      )}
+
+      {/* Show Replies Button */}
+      {!reply.replies && !loadingReplies[reply._id] && (
+        <button
+          onClick={() => handleShowNestedReplies(reply._id)}
+          className="mt-2 mx-2 text-sm text-blue-500"
+        >
+          Show Replies
+        </button>
+      )}
+
+      {/* Display Nested Replies */}
+      {Array.isArray(reply.replies) && reply.replies.length > 0 && (
+        <div className="mt-4 space-y-2 pl-6">
+          {reply.replies.map((nestedReply) => (
+            <ReplyItem
+              key={nestedReply._id}
+              reply={nestedReply}
+              movieId={movieId}
+              setError={setError}
+              setReplyingToReplyId={setReplyingToReplyId}
+              replyingToReplyId={replyingToReplyId}
+              setNewReplies={setNewReplies}
+              newReplies={newReplies}
+              handleAddNestedReply={handleAddNestedReply}
+              loadingReplies={loadingReplies}
+              fetchRepliesToReply={fetchRepliesToReply}
+            />
+          ))}
+        </div>
+      )}
+    </div>
+  );
+};
 
 const Comments = ({ movieId }) => {
   const [comments, setComments] = useState([]);
   const [newComment, setNewComment] = useState(""); // New comment text
-  const [newReply, setNewReply] = useState(""); // New reply text
+  const [newReplies, setNewReplies] = useState({}); // New reply text for each reply
   const [loadingComments, setLoadingComments] = useState(false); // Loading state for comments
   const [loadingReplies, setLoadingReplies] = useState({}); // Track loading state for replies
   const [error, setError] = useState(""); // Error handling
   const [replyingToCommentId, setReplyingToCommentId] = useState(null); // Track which comment the user is replying to
+  const [replyingToReplyId, setReplyingToReplyId] = useState(null); // Track which reply the user is replying to
 
   // Fetch comments for the movie
   useEffect(() => {
@@ -31,34 +115,24 @@ const Comments = ({ movieId }) => {
     if (movieId) fetchComments();
   }, [movieId]);
 
-  // Function to fetch replies for a specific comment
+  // Fetch replies for a specific comment
   const fetchReplies = async (commentId) => {
     try {
-      // Set loading state for the specific comment
       setLoadingReplies((prev) => ({ ...prev, [commentId]: true }));
-  
-      // Fetch replies from the backend
+
       const response = await fetch(`http://localhost:8000/comments/replies/${commentId}`);
-      console.log("Response object:", response);
-  
       if (!response.ok) {
         throw new Error(`Failed to fetch replies: ${response.statusText}`);
       }
-  
-      // Parse the response JSON
+
       const data = await response.json();
-      console.log("Parsed response data:", data);
-  
-      // Update the state with fetched replies
       setComments((prevComments) =>
         prevComments.map((comment) =>
           comment._id === commentId
-            ? { ...comment, replies: data.data || [] } // Update to match backend response structure
+            ? { ...comment, replies: data.data || [] }
             : comment
         )
       );
-  
-      // Reset loading state for the specific comment
       setLoadingReplies((prev) => ({ ...prev, [commentId]: false }));
     } catch (err) {
       console.error("Error fetching replies:", err);
@@ -66,7 +140,41 @@ const Comments = ({ movieId }) => {
       setLoadingReplies((prev) => ({ ...prev, [commentId]: false }));
     }
   };
-  
+
+  // Fetch replies to a reply
+  const fetchRepliesToReply = async (replyId) => {
+    try {
+      setLoadingReplies((prev) => ({ ...prev, [replyId]: true }));
+
+      const response = await fetch(`http://localhost:8000/comments/replies/${replyId}`);
+      console.log(response);
+      if (!response.ok) {
+        throw new Error(`Failed to fetch replies to reply: ${response.statusText}`);
+      }
+
+      const data = await response.json();
+      setComments((prevComments) =>
+        prevComments.map((comment) =>
+          comment.replies
+            ? {
+                ...comment,
+                replies: comment.replies.map((reply) =>
+                  reply._id === replyId
+                    ? { ...reply, replies: data.data || [] }
+                    : reply
+                ),
+              }
+            : comment
+        )
+      );
+      setLoadingReplies((prev) => ({ ...prev, [replyId]: false }));
+    } catch (err) {
+      console.error("Error fetching replies to reply:", err);
+      setError("Unable to fetch replies to reply at this time.");
+      setLoadingReplies((prev) => ({ ...prev, [replyId]: false }));
+    }
+  };
+
   // Handle new comment submission
   const handleAddComment = async () => {
     if (!newComment.trim()) {
@@ -109,7 +217,7 @@ const Comments = ({ movieId }) => {
 
   // Handle new reply submission
   const handleAddReply = async (commentId) => {
-    if (!newReply.trim()) {
+    if (!newReplies[commentId].trim()) {
       setError("Reply cannot be empty.");
       return;
     }
@@ -128,7 +236,7 @@ const Comments = ({ movieId }) => {
           Authorization: `Bearer ${authToken}`,
         },
         body: JSON.stringify({
-          text: newReply,
+          text: newReplies[commentId],
           comment_id: commentId,
           movie_id: movieId,
         }),
@@ -146,12 +254,63 @@ const Comments = ({ movieId }) => {
             : comment
         )
       );
-      setNewReply(""); // Reset the new reply input
-      setReplyingToCommentId(null); // Reset the replying state
-      setError(""); // Clear any error
+      setNewReplies((prev) => ({ ...prev, [commentId]: "" })); // Reset the reply input
     } catch (err) {
       console.error(err);
       setError("Unable to add reply at this time.");
+    }
+  };
+
+  // Handle new nested reply submission
+  const handleAddNestedReply = async (replyId) => {
+    if (!newReplies[replyId].trim()) {
+      setError("Reply cannot be empty.");
+      return;
+    }
+
+    const authToken = localStorage.getItem("authToken");
+    if (!authToken) {
+      setError("You must be logged in to post a reply.");
+      return;
+    }
+
+    try {
+      const response = await fetch(`http://localhost:8000/comments/reply`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${authToken}`,
+        },
+        body: JSON.stringify({
+          text: newReplies[replyId],
+          comment_id: replyId,
+          movie_id: movieId,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to add nested reply");
+      }
+
+      const addedNestedReply = await response.json();
+      setComments((prevComments) =>
+        prevComments.map((comment) =>
+          comment.replies
+            ? {
+                ...comment,
+                replies: comment.replies.map((reply) =>
+                  reply._id === replyId
+                    ? { ...reply, replies: [...(reply.replies || []), addedNestedReply.data] }
+                    : reply
+                ),
+              }
+            : comment
+        )
+      );
+      setNewReplies((prev) => ({ ...prev, [replyId]: "" })); // Reset the nested reply input
+    } catch (err) {
+      console.error(err);
+      setError("Unable to add nested reply at this time.");
     }
   };
 
@@ -181,61 +340,24 @@ const Comments = ({ movieId }) => {
       <div className="space-y-4">
         {comments.length > 0 ? (
           comments.map((comment, index) => (
-            <div key={index} className="p-3 border rounded-md bg-gray-100">
-              <p className="text-sm text-gray-800">{comment.text}</p>
-              <span className="text-xs text-gray-500">
-                - {comment.name || "Anonymous"}
-              </span>
-
-              {/* Reply Button */}
-              {replyingToCommentId === comment._id ? (
-                <div className="mt-2">
-                  <textarea
-                    className="w-full p-2 border rounded-md"
-                    placeholder="Add a reply..."
-                    value={newReply}
-                    onChange={(e) => setNewReply(e.target.value)}
-                  />
-                  <button
-                    onClick={() => handleAddReply(comment._id)}
-                    className="mt-2 px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600"
-                  >
-                    Reply
-                  </button>
-                </div>
-              ) : (
-                <button
-                  onClick={() => setReplyingToCommentId(comment._id)}
-                  className="mt-2 text-sm text-blue-500"
-                >
-                  Reply
-                </button>
-              )}
-
-              {/* Show "Show Replies" Button */}
-              {!comment.replies && !loadingReplies[comment._id] && (
-                <button
-                  onClick={() => fetchReplies(comment._id)}
-                  className="mt-2 text-sm text-blue-500"
-                >
-                  Show Replies
-                </button>
-              )}
-
-              {/* Display Replies if fetched */}
-              {Array.isArray(comment.replies) && comment.replies.length > 0 && (
-                <div className="mt-4 space-y-2 pl-6">
-                  {comment.replies.map((reply, replyIndex) => (
-                    <div key={replyIndex} className="border-l-2 pl-4 text-sm">
-                      <p className="text-gray-800">{reply.text}</p>
-                      <span className="text-xs text-gray-500">
-                        - {reply.name || "Anonymous"}
-                      </span>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
+            <CommentItem
+              key={index}
+              comment={comment}
+              movieId={movieId}
+              setComments={setComments}
+              setError={setError}
+              setReplyingToCommentId={setReplyingToCommentId}
+              replyingToCommentId={replyingToCommentId}
+              setReplyingToReplyId={setReplyingToReplyId}
+              replyingToReplyId={replyingToReplyId}
+              newReplies={newReplies}
+              setNewReplies={setNewReplies}
+              handleAddReply={handleAddReply}
+              handleAddNestedReply={handleAddNestedReply}
+              loadingReplies={loadingReplies}
+              fetchReplies={fetchReplies}
+              fetchRepliesToReply={fetchRepliesToReply}
+            />
           ))
         ) : (
           <p className="text-gray-500">No comments yet. Be the first to add one!</p>
@@ -245,4 +367,4 @@ const Comments = ({ movieId }) => {
   );
 };
 
-export default Comments;
+export default Comments;  
